@@ -45,17 +45,24 @@ class TOKEN:
 
 # A class representing a node in a tree
 class NODE:
-    children = []
     def __init__(self,token):
         if isinstance(token, TOKEN):
             self.TOKEN = token
+            self.children = []
         else: raise TypeError("Expected a TOKEN, got %s"%type(token))
     def addChild(self,node):
         if isinstance(node,NODE):
             self.children.append(node)
         else: raise TypeError("Expected a NODE, got %s"%type(token))
+    def delChild(self,index = -1):
+        return self.children.pop(index)
     def __repr__(self):
+        #return '<NODE: %s: children: %s>'%(self.TOKEN.VAL,self.children)
         return '<NODE: %s>'%self.TOKEN.VAL
+    def __getitem__(self,index):
+        return self.children[index]
+    def __len__(self):
+        return len(self.children)
 
 # ???: Required ???
 # A class representing an Abstract Syntax Tree

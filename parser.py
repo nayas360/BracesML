@@ -28,8 +28,7 @@ class PARSER:
         braceCount = 0
         while TOK is not None:
             if TOK.TYPE not in (TOKEN_ENUM.COMMENT, TOKEN_ENUM.WHITE_SPACE):
-                #print(TOK.VAL)
-                if len(stack) != 0:
+                if verbose and len(stack) != 0:
                     print(stack)
                 if TOK.TYPE == TOKEN_ENUM.OBRACE:
                     braceCount += 1
@@ -46,29 +45,29 @@ class PARSER:
                     if len(stack) == 0:
                         stack.append(NODE(TOK))
                     else:
-                        print("adding %s as child of %s"%(NODE(TOK),stack[-1]))
+                        if verbose:
+                            print("found identifier: %s"%TOK.VAL)
+                            print("adding %s as child of %s"%(NODE(TOK),stack[-1]))
                         stack[-1].addChild(NODE(TOK))
                         stack.append(NODE(TOK))
-                    if verbose:
-                        print("found identifier: %s"%TOK.VAL)
                 elif TOK.TYPE == TOKEN_ENUM.STRING:
                     TOK.VAL = TOK.VAL.strip('"')
-                    print("adding %s as child of %s"%(NODE(TOK),stack[-1]))
-                    stack[-1].addChild(NODE(TOK))
                     if verbose:
                         print("found string: %s"%TOK.VAL)
+                        print("adding %s as child of %s"%(NODE(TOK),stack[-1]))
+                    stack[-1].addChild(NODE(TOK))
                 elif TOK.TYPE == TOKEN_ENUM.REAL:
                     TOK.VAL = float(TOK.VAL)
-                    print("adding %s as child of %s"%(NODE(TOK),stack[-1]))
-                    stack[-1].addChild(NODE(TOK))
                     if verbose:
                         print("found real: %s"%TOK.VAL)
+                        print("adding %s as child of %s"%(NODE(TOK),stack[-1]))
+                    stack[-1].addChild(NODE(TOK))
                 elif TOK.TYPE == TOKEN_ENUM.INT:
                     TOK.VAL = int(TOK.VAL)
-                    print("adding %s as child of %s"%(NODE(TOK),stack[-1]))
-                    stack[-1].addChild(NODE(TOK))
                     if verbose:
                         print("found integer: %s"%TOK.VAL)
+                        print("adding %s as child of %s"%(NODE(TOK),stack[-1]))
+                    stack[-1].addChild(NODE(TOK))
                 TOK = self.lexers['main'].getToken()
             else:
                 TOK = self.lexers['main'].getToken()
@@ -77,7 +76,7 @@ class PARSER:
         return stack[0]
 
 if __name__ == '__main__':
-    with open("test1.dblk") as f:
+    with open("test.dblk") as f:
         source = ''.join(f.readlines())
     parser = PARSER(source)
-    #ast = parser.parse()#True)
+    ast = parser.parse(True)
