@@ -10,7 +10,8 @@ class PARSER:
         # parser can have only one lexer instance
         # it can create temporary instances of itself
         # to be able to parse external files
-        self.lexer = LEXER(source)
+        self.source = source
+        self.lexer = LEXER(fileOpener(source))
 
     # This method has to be called explicitly for the parser
     # to return an AST
@@ -72,7 +73,9 @@ class PARSER:
             else:
                 TOK = self.lexer.getToken()
         if braceCount != 0:
-            raise ParserException("Malformed Document: Mismatched braces")
+            exp = "Error in File {} @line {}".format(self.source,\
+                    self.lexer.source[:self.lexer._LEXER__POS].count('\n'))
+            raise ParserException(exp)
         return processImports(stack[0])
 
 def fileOpener(filename):
@@ -84,10 +87,8 @@ def fileOpener(filename):
 # Reconstruct prettyfied data from AST
 def dump(AST,s = '',tabcount = 0):
     if AST.token.type == TOKEN_ENUM.STRING:
-        s += ('\t'*tabcount)+'"'+str(AST)+'" '
-    elif AST.token.type == TOKEN_ENUM.IMPORT_STRING:
-            s += ('\t'*tabcount)+'$"'+str(AST)+'" '
-    else: s += ('\t'*tabcount)+str(AST)+' '
+        s += ('\t'*tabcount)+'"'+str(AST)+'"\n'
+    else: s += ('\t'*tabcount)+str(AST)
     if AST.token.type == TOKEN_ENUM.IDEN:
         if len(AST) == 0:
             s += '{ }\n'
@@ -95,8 +96,10 @@ def dump(AST,s = '',tabcount = 0):
     for node in AST.children:
         s = dump(node,s,tabcount+1)
     if AST.token.type == TOKEN_ENUM.IDEN:
-        if len(AST) != 0:
-            s += '\n'+('\t'*tabcount)+'}'+'\n'
+        if len(AST) != 0 :
+            if s[-1] != '\n':
+                s += '\n'
+            s += ('\t'*tabcount)+'}\n'
     if tabcount == 0:
         s = s[:-1]
     return s
@@ -106,20 +109,21 @@ def processImports(root):
         while node.hasChildOfTokenType(TOKEN_ENUM.IMPORT_STRING):
             child = node.getChildOfTokenType(TOKEN_ENUM.IMPORT_STRING)
             istmt = child.token.val.split('@')
-            if istmt[0] != '': # external file provided
-                tmpParser = PARSER(fileOpener(istmt[0]))
-                if istmt[1] != '':
-                    tmpRoot = tmpParser.parse().getNodeAtPath(istmt[1])
-                else: tmpRoot = tmpParser.parse()
-                for chld in tmpRoot.children:
-                    node.addChild(chld)
-            elif istmt[1] != '': # internal file
-                for chld in root.getNodeAtPath(istmt[1]).children:
-                    node.addChild(chld)
+            if len(istmt) > 1:
+                if istmt[0] != '': # external file provided
+                    tmpParser = PARSER(istmt[0])
+                    if istmt[1] != '':
+                        tmpRoot = tmpParser.parse().getNodeAtPath(istmt[1])
+                    else: tmpRoot = tmpParser.parse()
+                    for chld in tmpRoot.children:
+                        node.addChild(chld)
+                elif istmt[1] != '': # internal file
+                    for chld in root.getNodeAtPath(istmt[1]).children:
+                        node.addChild(chld)
             node.removeChild(child)
     return root
 
 if __name__ == '__main__':
-    parser = PARSER(fileOpener("test.dblk"))
+    parser = PARSER("test.dblk")
     ast = parser.parse()#True)
     print(dump(ast))

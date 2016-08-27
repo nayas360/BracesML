@@ -39,7 +39,7 @@ class REGEX: #__REGEX__:
     IDEN = re.compile("[_A-Za-z]\w*")
     REAL = re.compile("[-+]?\d*\.\d*")
     INT = re.compile("[-+]?\d*")
-    STRING = re.compile("\$?\".+?\"",re.DOTALL)
+    STRING = re.compile("\$?((\"\")|(\".+?\"))",re.DOTALL)
 
     # TYPES WHICH ARE NOT RETURNED
     COMMENT = re.compile("((/\*(.|\\\n)*\*/)|(//.*\\\n))")
