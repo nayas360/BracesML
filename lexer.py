@@ -43,33 +43,33 @@ class LEXER:
         else:
             return None
 
-    def seeNextToken(self):
-        if REGEX.match(REGEX.IDEN,self.source[self.__POS:]):
-            TOK = TOKEN(TOKEN_ENUM.IDEN,REGEX.match(REGEX.IDEN,self.source[self.__POS:]))
-            return TOK
-        elif REGEX.match(REGEX.OBRACE,self.source[self.__POS:]):
-            TOK = TOKEN(TOKEN_ENUM.OBRACE,REGEX.match(REGEX.OBRACE,self.source[self.__POS:]))
-            return TOK
-        elif REGEX.match(REGEX.EBRACE,self.source[self.__POS:]):
-            TOK = TOKEN(TOKEN_ENUM.EBRACE,REGEX.match(REGEX.EBRACE,self.source[self.__POS:]))
-            return TOK
-        elif REGEX.match(REGEX.REAL,self.source[self.__POS:]):
-            TOK = TOKEN(TOKEN_ENUM.REAL,REGEX.match(REGEX.REAL,self.source[self.__POS:]))
-            return TOK
-        elif REGEX.match(REGEX.INT,self.source[self.__POS:]):
-            TOK = TOKEN(TOKEN_ENUM.INT,REGEX.match(REGEX.INT,self.source[self.__POS:]))
-            return TOK
-        elif REGEX.match(REGEX.STRING,self.source[self.__POS:]):
-            TOK = TOKEN(TOKEN_ENUM.STRING,REGEX.match(REGEX.STRING,self.source[self.__POS:]))
-            return TOK
-        elif REGEX.match(REGEX.COMMENT,self.source[self.__POS:]):
-            TOK = TOKEN(TOKEN_ENUM.COMMENT,REGEX.match(REGEX.COMMENT,self.source[self.__POS:]))
-            return TOK
-        elif REGEX.match(REGEX.WHITE_SPACE,self.source[self.__POS:]):
-            TOK = TOKEN(TOKEN_ENUM.WHITE_SPACE,REGEX.match(REGEX.WHITE_SPACE,self.source[self.__POS:]))
-            return TOK
-        else:
-            return None
+##    def seeNextToken(self):
+##        if REGEX.match(REGEX.IDEN,self.source[self.__POS:]):
+##            TOK = TOKEN(TOKEN_ENUM.IDEN,REGEX.match(REGEX.IDEN,self.source[self.__POS:]))
+##            return TOK
+##        elif REGEX.match(REGEX.OBRACE,self.source[self.__POS:]):
+##            TOK = TOKEN(TOKEN_ENUM.OBRACE,REGEX.match(REGEX.OBRACE,self.source[self.__POS:]))
+##            return TOK
+##        elif REGEX.match(REGEX.EBRACE,self.source[self.__POS:]):
+##            TOK = TOKEN(TOKEN_ENUM.EBRACE,REGEX.match(REGEX.EBRACE,self.source[self.__POS:]))
+##            return TOK
+##        elif REGEX.match(REGEX.REAL,self.source[self.__POS:]):
+##            TOK = TOKEN(TOKEN_ENUM.REAL,REGEX.match(REGEX.REAL,self.source[self.__POS:]))
+##            return TOK
+##        elif REGEX.match(REGEX.INT,self.source[self.__POS:]):
+##            TOK = TOKEN(TOKEN_ENUM.INT,REGEX.match(REGEX.INT,self.source[self.__POS:]))
+##            return TOK
+##        elif REGEX.match(REGEX.STRING,self.source[self.__POS:]):
+##            TOK = TOKEN(TOKEN_ENUM.STRING,REGEX.match(REGEX.STRING,self.source[self.__POS:]))
+##            return TOK
+##        elif REGEX.match(REGEX.COMMENT,self.source[self.__POS:]):
+##            TOK = TOKEN(TOKEN_ENUM.COMMENT,REGEX.match(REGEX.COMMENT,self.source[self.__POS:]))
+##            return TOK
+##        elif REGEX.match(REGEX.WHITE_SPACE,self.source[self.__POS:]):
+##            TOK = TOKEN(TOKEN_ENUM.WHITE_SPACE,REGEX.match(REGEX.WHITE_SPACE,self.source[self.__POS:]))
+##            return TOK
+##        else:
+##            return None
 
 if __name__ == '__main__':
     with open("test.dblk") as f:

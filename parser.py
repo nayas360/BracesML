@@ -1,8 +1,5 @@
 from lexer import LEXER
-from utils import NODE,TOKEN_ENUM
-
-class ParserException(Exception):
-    pass
+from utils import NODE,TOKEN_ENUM,ParserException
 
 # Parser class
 # has to be initialised with a string source
@@ -76,7 +73,7 @@ class PARSER:
                 TOK = self.lexer.getToken()
         if braceCount != 0:
             raise ParserException("Malformed Document: Mismatched braces")
-        return stack[0]
+        return processImports(stack[0])
 
 def fileOpener(filename):
     source = None
@@ -103,6 +100,24 @@ def dump(AST,s = '',tabcount = 0):
     if tabcount == 0:
         s = s[:-1]
     return s
+
+def processImports(root):
+    for node in root:
+        while node.hasChildOfTokenType(TOKEN_ENUM.IMPORT_STRING):
+            child = node.getChildOfTokenType(TOKEN_ENUM.IMPORT_STRING)
+            istmt = child.token.val.split('@')
+            if istmt[0] != '': # external file provided
+                tmpParser = PARSER(fileOpener(istmt[0]))
+                if istmt[1] != '':
+                    tmpRoot = tmpParser.parse().getNodeAtPath(istmt[1])
+                else: tmpRoot = tmpParser.parse()
+                for chld in tmpRoot.children:
+                    node.addChild(chld)
+            elif istmt[1] != '': # internal file
+                for chld in root.getNodeAtPath(istmt[1]).children:
+                    node.addChild(chld)
+            node.removeChild(child)
+    return root
 
 if __name__ == '__main__':
     parser = PARSER(fileOpener("test.dblk"))

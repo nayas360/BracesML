@@ -1,6 +1,9 @@
 import re
 
-__all__ = ['TOKEN_ENUM','TOKEN','REGEX','NODE']
+__all__ = ['TOKEN_ENUM','TOKEN','REGEX','NODE','ParserException']
+
+class ParserException(Exception):
+    pass
 
 # Collection of recognised tokens
 class TOKEN_ENUM:
@@ -70,6 +73,51 @@ class NODE:
             self.children.append(node)
             return node
         else: raise TypeError("Expected a NODE, got %s"%type(token))
+    def hasChild(self,childName):
+        for child in self.children:
+            if child.token.val == childName:
+                return True
+        return False
+    def hasChildNode(self,node):
+        for child in self.children:
+            if child.token.val == node.token.val:
+                return True
+        return False
+    def hasChildOfTokenType(self,tokenType):
+        for child in self.children:
+            if child.token.type == tokenType:
+                return True
+        return False
+    def getChild(self,childName):
+        for child in self.children:
+            if child.token.val == childName:
+                return child
+        return None
+    def getChildOfTokenType(self,tokenType):
+        for child in self.children:
+            if child.token.type == tokenType:
+                return child
+        return None
+    def isNode(self,name):
+        return self.token.val == name
+    def isTokenType(self,tokenType):
+        return self.token.type == tokenType
+    def getNodeAtPath(self,path):
+        paths = path.split('/')
+        # Cannot start search if token is not an IDENTIFIER
+        if len(path) > 0: #and self.token.type == TOKEN_ENUM.IDEN:
+            node = self
+            if self.isNode(paths[0]):
+                paths = paths[1:]
+            for p in paths:
+                if node.hasChild(p):
+                    node = node.getChild(p)
+                else: return None
+            #if node.token.type == TOKEN_ENUM.IDEN:
+            return  node
+    def removeChild(self,node):
+        if self.hasChildNode(node):
+            self.children.remove(node)
     def __repr__(self):
         #return '<NODE: %s: children: %s>'%(self.TOKEN.VAL,self.children)
         return '<NODE: %s>'%self.token.val
@@ -79,11 +127,11 @@ class NODE:
         return self.children[index]
     def __len__(self):
         return len(self.children)
-##    def __iter__(self):
-##        yield self
-##        for child in self.children:
-##            for node in child:
-##                yield node
+    def __iter__(self):
+        yield self
+        for child in self.children:
+            for node in child:
+                yield node
 
 # ???: Required ???
 # A class representing an Abstract Syntax Tree
