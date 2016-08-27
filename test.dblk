@@ -11,7 +11,10 @@ dblk {
 		frac_node { 10.10 } // Floating point decimal point number this too is part of the comment
 		int_node { 10 } // Integer decimal number
 	}
-	import_node { // test import node 
+	import_node { // test import node
+		$"@dblk/import_node2"
+	}
+	import_node2 {
 		$"test1.dblk@dblk"
 	}
 }
