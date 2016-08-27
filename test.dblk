@@ -8,7 +8,10 @@ dblk {
 		"test string"
 	}
 	num_node { // A number test
-		frac_node { 10.10 } // Floating point decimal point number
+		frac_node { 10.10 } // Floating point decimal point number this too is part of the comment
 		int_node { 10 } // Integer decimal number
+	}
+	import_node { // test import node 
+		$"test1.dblk@dblk"
 	}
 }

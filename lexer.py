@@ -3,9 +3,9 @@ from utils import REGEX,TOKEN,TOKEN_ENUM
 # The lexer class
 # has to be initialised with a string source
 class LEXER:
-    __POS = 0
     def __init__(self,source):
         self.source = source
+        self.__POS = 0
 
     def getToken(self):
         if REGEX.match(REGEX.IDEN,self.source[self.__POS:]):
@@ -77,8 +77,8 @@ if __name__ == '__main__':
     lexer = LEXER(source)
     TOK = lexer.getToken()
     while TOK is not None:
-        if TOK.TYPE not in (TOKEN_ENUM.COMMENT, TOKEN_ENUM.WHITE_SPACE):
-            print(TOK.VAL,TOK.TYPE)
+        if TOK.type not in (TOKEN_ENUM.COMMENT, TOKEN_ENUM.WHITE_SPACE):
+            print(TOK.val,'<',TOKEN_ENUM.TOKEN_MAP[TOK.type],'>')
             TOK = lexer.getToken()
         else:
             TOK = lexer.getToken()
