@@ -75,7 +75,8 @@ class PARSER:
         if braceCount != 0:
             exp = "Error in File {} @line {}".format(self.source,\
                     self.lexer.source[:self.lexer._LEXER__POS].count('\n'))
-            raise ParserException(exp)
+            print(exp)
+            exit(-1)
         return processImports(stack[0])
 
 def fileOpener(filename):
@@ -105,23 +106,27 @@ def dump(AST,s = '',tabcount = 0):
     return s
 
 def processImports(root):
-    for node in root:
-        while node.hasChildOfTokenType(TOKEN_ENUM.IMPORT_STRING):
-            child = node.getChildOfTokenType(TOKEN_ENUM.IMPORT_STRING)
-            istmt = child.token.val.split('@')
-            if len(istmt) > 1:
-                if istmt[0] != '': # external file provided
-                    tmpParser = PARSER(istmt[0])
-                    if istmt[1] != '':
-                        tmpRoot = tmpParser.parse().getNodeAtPath(istmt[1])
-                    else: tmpRoot = tmpParser.parse()
-                    for chld in tmpRoot.children:
-                        node.addChild(chld)
-                elif istmt[1] != '': # internal file
+    try:
+        for node in root:
+            while node.hasChildOfTokenType(TOKEN_ENUM.IMPORT_STRING):
+                child = node.getChildOfTokenType(TOKEN_ENUM.IMPORT_STRING)
+                istmt = child.token.val.split('@')
+                if len(istmt) > 0:
+                    if istmt[0] != '': # external file provided
+                        tmpParser = PARSER(istmt[0])
+                        if len(istmt) > 1 and istmt[1] != '':
+                            tmpRoot = tmpParser.parse().getNodeAtPath(istmt[1])
+                        else: tmpRoot = tmpParser.parse()
+                        for chld in tmpRoot.children:
+                            node.addChild(chld)
+                elif len(istmt) > 1 and istmt[1] != '': # internal file
                     for chld in root.getNodeAtPath(istmt[1]).children:
                         node.addChild(chld)
-            node.removeChild(child)
-    return root
+                node.removeChild(child)
+        return root
+    except RecursionError:
+        print('parseError: Cyclic imports!!')
+        exit(-1)
 
 if __name__ == '__main__':
     parser = PARSER("test.dblk")

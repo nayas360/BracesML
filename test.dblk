@@ -12,9 +12,6 @@ dblk {
 		int_node { 10 } // Integer decimal number
 	}
 	import_node { // test import node
-		$"test1.dblk@dblk"
-	}
-	import_node2 {
-		$"@dblk/import_node"
+		$"test1.dblk@dblk/test_node1"
 	}
 }

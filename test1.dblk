@@ -1,5 +1,5 @@
 dblk {
 	""
 	test_node1 { "testing test_node1" }
-	test_node2 { $"" }
+	test_node2 { }
 }

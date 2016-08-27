@@ -1,4 +1,5 @@
 import re
+import sys
 
 __all__ = ['TOKEN_ENUM','TOKEN','REGEX','NODE','ParserException']
 
