@@ -11,7 +11,20 @@ dblk {
 		frac_node { 10.10 } // Floating point decimal point number this too is part of the comment
 		int_node { 10 } // Integer decimal number
 	}
-	import_node { // test import node
-		$"test1.dblk@dblk/test_node1"
+	import_node { // Import test node
+		// Imports are of the format $"filename.ext@path/to/node"
+		test1{
+			$"test1.dblk" // this will import all the children of the root node
+			// Note here the path to node is not provided
+		}
+		test2 {
+			$"test1.dblk@dblk/test_node1"
+			// this will import children of node specified after @ symbol
+		}
+		test3 {
+			$"@dblk/import_node/test2"
+			// If the file name is not provided like above it is assumed that the
+			// path is in the same file
+		}
 	}
 }

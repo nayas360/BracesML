@@ -1,5 +1,6 @@
 from lexer import LEXER
-from utils import NODE,TOKEN_ENUM,ParserException
+from utils import NODE,TOKEN_ENUM
+import time
 
 # Parser class
 # has to be initialised with a string source
@@ -111,6 +112,7 @@ def processImports(root):
             while node.hasChildOfTokenType(TOKEN_ENUM.IMPORT_STRING):
                 child = node.getChildOfTokenType(TOKEN_ENUM.IMPORT_STRING)
                 istmt = child.token.val.split('@')
+                #print(len(istmt),istmt)
                 if len(istmt) > 0:
                     if istmt[0] != '': # external file provided
                         tmpParser = PARSER(istmt[0])
@@ -119,9 +121,9 @@ def processImports(root):
                         else: tmpRoot = tmpParser.parse()
                         for chld in tmpRoot.children:
                             node.addChild(chld)
-                elif len(istmt) > 1 and istmt[1] != '': # internal file
-                    for chld in root.getNodeAtPath(istmt[1]).children:
-                        node.addChild(chld)
+                    elif len(istmt) > 1 and istmt[1] != '': # internal file
+                        for chld in root.getNodeAtPath(istmt[1]).children:
+                            node.addChild(chld)
                 node.removeChild(child)
         return root
     except RecursionError:

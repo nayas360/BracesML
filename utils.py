@@ -1,10 +1,10 @@
 import re
 import sys
 
-__all__ = ['TOKEN_ENUM','TOKEN','REGEX','NODE','ParserException']
+__all__ = ['TOKEN_ENUM','TOKEN','REGEX','NODE']
 
-class ParserException(Exception):
-    pass
+##class ParserException(Exception):
+##    pass
 
 # Collection of recognised tokens
 class TOKEN_ENUM:
