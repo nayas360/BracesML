@@ -5,80 +5,41 @@ from utils import REGEX,TOKEN,TOKEN_ENUM
 class LEXER:
     def __init__(self,source):
         self.source = source
-        self.__POS = 0
+        self._pos = 0
 
-    def getToken(self):
-        if REGEX.match(REGEX.IDEN,self.source[self.__POS:]):
-            TOK = TOKEN(TOKEN_ENUM.IDEN,REGEX.match(REGEX.IDEN,self.source[self.__POS:]))
-            self.__POS += TOK.len
-            return TOK
-        elif REGEX.match(REGEX.OBRACE,self.source[self.__POS:]):
-            TOK = TOKEN(TOKEN_ENUM.OBRACE,REGEX.match(REGEX.OBRACE,self.source[self.__POS:]))
-            self.__POS += TOK.len
-            return TOK
-        elif REGEX.match(REGEX.EBRACE,self.source[self.__POS:]):
-            TOK = TOKEN(TOKEN_ENUM.EBRACE,REGEX.match(REGEX.EBRACE,self.source[self.__POS:]))
-            self.__POS += TOK.len
-            return TOK
-        elif REGEX.match(REGEX.REAL,self.source[self.__POS:]):
-            TOK = TOKEN(TOKEN_ENUM.REAL,REGEX.match(REGEX.REAL,self.source[self.__POS:]))
-            self.__POS += TOK.len
-            return TOK
-        elif REGEX.match(REGEX.INT,self.source[self.__POS:]):
-            TOK = TOKEN(TOKEN_ENUM.INT,REGEX.match(REGEX.INT,self.source[self.__POS:]))
-            self.__POS += TOK.len
-            return TOK
-        elif REGEX.match(REGEX.STRING,self.source[self.__POS:]):
-            TOK = TOKEN(TOKEN_ENUM.STRING,REGEX.match(REGEX.STRING,self.source[self.__POS:]))
-            self.__POS += TOK.len
-            return TOK
-        elif REGEX.match(REGEX.COMMENT,self.source[self.__POS:]):
-            TOK = TOKEN(TOKEN_ENUM.COMMENT,REGEX.match(REGEX.COMMENT,self.source[self.__POS:]))
-            self.__POS += TOK.len
-            return TOK
-        elif REGEX.match(REGEX.WHITE_SPACE,self.source[self.__POS:]):
-            TOK = TOKEN(TOKEN_ENUM.WHITE_SPACE,REGEX.match(REGEX.WHITE_SPACE,self.source[self.__POS:]))
-            self.__POS += TOK.len
-            return TOK
-        else:
-            return None
+    def getNextToken(self):
+        if self._pos == len(self.source):
+            return TOKEN('\0',TOKEN_ENUM.EOF,self._pos)
+        TOK = None
+        for i in REGEX.TYPES_LIST:
+            regex_result = REGEX.match(i,self.source[self._pos:])
+            if regex_result not in (None,''):
+                TOK = TOKEN(regex_result,TOKEN_ENUM.TYPES_LIST[REGEX.TYPES_LIST.index(i)],self._pos)
+                break
+        if TOK == None:
+            raise TypeError("cannot determine token at {}".format(self._pos))
+        self._pos += TOK.len
+        return TOK
 
-##    def seeNextToken(self):
-##        if REGEX.match(REGEX.IDEN,self.source[self.__POS:]):
-##            TOK = TOKEN(TOKEN_ENUM.IDEN,REGEX.match(REGEX.IDEN,self.source[self.__POS:]))
-##            return TOK
-##        elif REGEX.match(REGEX.OBRACE,self.source[self.__POS:]):
-##            TOK = TOKEN(TOKEN_ENUM.OBRACE,REGEX.match(REGEX.OBRACE,self.source[self.__POS:]))
-##            return TOK
-##        elif REGEX.match(REGEX.EBRACE,self.source[self.__POS:]):
-##            TOK = TOKEN(TOKEN_ENUM.EBRACE,REGEX.match(REGEX.EBRACE,self.source[self.__POS:]))
-##            return TOK
-##        elif REGEX.match(REGEX.REAL,self.source[self.__POS:]):
-##            TOK = TOKEN(TOKEN_ENUM.REAL,REGEX.match(REGEX.REAL,self.source[self.__POS:]))
-##            return TOK
-##        elif REGEX.match(REGEX.INT,self.source[self.__POS:]):
-##            TOK = TOKEN(TOKEN_ENUM.INT,REGEX.match(REGEX.INT,self.source[self.__POS:]))
-##            return TOK
-##        elif REGEX.match(REGEX.STRING,self.source[self.__POS:]):
-##            TOK = TOKEN(TOKEN_ENUM.STRING,REGEX.match(REGEX.STRING,self.source[self.__POS:]))
-##            return TOK
-##        elif REGEX.match(REGEX.COMMENT,self.source[self.__POS:]):
-##            TOK = TOKEN(TOKEN_ENUM.COMMENT,REGEX.match(REGEX.COMMENT,self.source[self.__POS:]))
-##            return TOK
-##        elif REGEX.match(REGEX.WHITE_SPACE,self.source[self.__POS:]):
-##            TOK = TOKEN(TOKEN_ENUM.WHITE_SPACE,REGEX.match(REGEX.WHITE_SPACE,self.source[self.__POS:]))
-##            return TOK
-##        else:
-##            return None
+    def resetLexerState(self):
+        self._pos = 0
+
+    def __iter__(self):
+        tok = self.getNextToken()
+        while 1:
+            yield tok
+            if tok.dtype is not TOKEN_ENUM.EOF:
+                tok = self.getNextToken()
+            else: break
+        # reset position
+        #self.resetLexerState()
 
 if __name__ == '__main__':
     with open("test.dblk") as f:
         source = ''.join(f.readlines())
     lexer = LEXER(source)
-    TOK = lexer.getToken()
-    while TOK is not None:
-        if TOK.type not in (TOKEN_ENUM.COMMENT, TOKEN_ENUM.WHITE_SPACE):
-            print(TOK.val,'<',TOKEN_ENUM.TOKEN_MAP[TOK.type],'>')
-            TOK = lexer.getToken()
-        else:
-            TOK = lexer.getToken()
+    tok_list = []
+    for TOK in lexer:
+        tok_list.append(TOK)
+        if TOK.dtype not in (TOKEN_ENUM.COMMENT, TOKEN_ENUM.WHITE_SPACE , TOKEN_ENUM.NEW_LINE):
+            print(TOK.lval,'<',TOKEN_ENUM.TOKEN_MAP[TOK.dtype],'>')
