@@ -6,8 +6,10 @@ class LEXER:
     def __init__(self,source):
         self.source = source
         self._pos = 0
+        # used to control if a type is not to be returned
+        self.suppressTypes = []
 
-    def getNextToken(self):
+    def getNextToken(self, seeOnly = False):
         if self._pos == len(self.source):
             return TOKEN('\0',TOKEN_ENUM.EOF,self._pos)
         TOK = None
@@ -18,7 +20,11 @@ class LEXER:
                 break
         if TOK == None:
             raise TypeError("cannot determine token at {}".format(self._pos))
-        self._pos += TOK.len
+        if TOK.dtype in self.suppressTypes:
+            self._pos += TOK.len
+            return self.getNextToken(seeOnly)
+        if not seeOnly:
+            self._pos += TOK.len
         return TOK
 
     def resetLexerState(self):
@@ -39,7 +45,7 @@ if __name__ == '__main__':
         source = ''.join(f.readlines())
     lexer = LEXER(source)
     tok_list = []
+    lexer.suppressTypes = [TOKEN_ENUM.COMMENT, TOKEN_ENUM.WHITE_SPACE]
     for TOK in lexer:
         tok_list.append(TOK)
-        if TOK.dtype not in (TOKEN_ENUM.COMMENT, TOKEN_ENUM.WHITE_SPACE , TOKEN_ENUM.NEW_LINE):
-            print(TOK.lval,'<',TOKEN_ENUM.TOKEN_MAP[TOK.dtype],'>')
+        print(TOK.lval,'<',TOKEN_ENUM.TOKEN_MAP[TOK.dtype],'>')
