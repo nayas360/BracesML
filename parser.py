@@ -1,5 +1,5 @@
 from lexer import Lexer
-from utils import NODE, TokenEnum, pos_to_line, file_opener
+from utils import Node, TokenEnum, pos_to_line, file_opener
 
 
 # TODO: Add error reporting to the parser
@@ -33,7 +33,7 @@ class PARSER:
                 # it means previous node has been pushed to the stack
                 # because of an opening brace
                 if c_node is None:
-                    c_node = NODE(token.lval)
+                    c_node = Node(token.lval)
                 # Most likely its an attribute key for a node
                 else:
                     if self.lexer.get_next_token().dtype == TokenEnum.equals_symbol:
@@ -81,17 +81,23 @@ def _dump(root, tab_count=0):
                 s += key + ' = "' + root.attrs[key] + '" '
             else:
                 s += key + ' = ' + str(root.attrs[key]) + ' '
-    s += '{\n'
+    s += '{'
     tab_count += 1
     if root.value is not None:
+        s += '\n'
         if isinstance(root.value, str):
             s += tabs() + '"' + root.value + '"\n'
         else:
             s += tabs() + str(root.value) + '\n'
+    if len(root.children) != 0:
+        s += '\n'
     for node in root.children:
         s += _dump(node, tab_count)
     tab_count -= 1
-    s += tabs() + '}\n'
+    if s[-1] == '{':
+        s += '}\n'
+    else:
+        s += tabs() + '}\n'
     if tab_count == 0:
         s = s[:-1]
     return s
@@ -106,4 +112,4 @@ def _generate_paths(root, paths=[], level=0):
 if __name__ == '__main__':
     p = PARSER('test.dblk')
     t = p.parse()
-    # _dump(t)
+    print(_dump(t))

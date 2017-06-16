@@ -28,7 +28,7 @@ class Lexer:
             self._pos += token_t.len
         return token_t
 
-    def reset_lexer_state(self):
+    def reset(self):
         self._pos = 0
 
     def __iter__(self):
@@ -40,7 +40,7 @@ class Lexer:
             else:
                 break
                 # reset position
-                # self.reset_lexer_state()
+                # self.reset()
 
 
 if __name__ == '__main__':

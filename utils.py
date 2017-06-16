@@ -1,7 +1,7 @@
 import re
 import sys
 
-__all__ = ['TokenEnum', 'Token', 'Regex', 'NODE', 'dbq_string', 'pos_to_line',
+__all__ = ['TokenEnum', 'Token', 'Regex', 'Node', 'dbq_string', 'pos_to_line',
            'file_opener']
 
 
@@ -46,8 +46,8 @@ class TokenEnum:
 
 # Collection of regular expressions returning the tokens
 class Regex:  # __REGEX__:
-    open_brace = re.compile("\{")
-    end_brace = re.compile("\}")
+    open_brace = re.compile("{")
+    end_brace = re.compile("}")
     identifier = re.compile("[_A-Za-z]\w*")
     equals_symbol = re.compile("=")
     real_t = re.compile("[-+]?\d*\.\d*")
@@ -122,7 +122,7 @@ def file_opener(filename):
 
 
 # A node class
-class NODE:
+class Node:
     def __init__(self, name, value=None, **attrs):
         self.name = name
         self.value = value
@@ -131,12 +131,12 @@ class NODE:
         self.children = []
 
     def add_child(self, name, value=None, **attrs):
-        child = NODE(name, value=None, **attrs)
+        child = Node(name, value=None, **attrs)
         self.children.append(child)
         return child
 
     def __repr__(self):
-        return '<NODE {}>'.format(self.name)
+        return '<Node {}>'.format(self.name)
 
     def __str__(self):
         return '{}'.format(self.name)
