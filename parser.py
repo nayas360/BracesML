@@ -1,97 +1,94 @@
 from lexer import Lexer
-from utils import Node, TokenEnum, pos_to_line, file_opener
+from utils import Node, TokenEnum, file_opener, BracesException, token_pos_to_line
 
-
-# TODO: Add error reporting to the parser
 
 class PARSER:
     def __init__(self, filename):
         self.filename = filename
         self.source = file_opener(filename)
-        self._source_lines = self.source.split('\n')
         self.lexer = Lexer(self.source)
         self.lexer.suppressTypes = [TokenEnum.comment, TokenEnum.whitespace]
 
     def parse(self):
         stack = []
         c_node = None
-        for token in self.lexer:
+        for token_t in self.lexer:
             # print(stack, c_node, token)
             # print(repr(token))
-            if token.dtype == TokenEnum.open_brace:
+            if token_t.dtype == TokenEnum.open_brace:
                 stack.append(c_node)
                 c_node = None
-            elif token.dtype == TokenEnum.end_brace:
+            elif token_t.dtype == TokenEnum.end_brace:
                 # if more than one nodes in stack
                 # the last node is a child of the previous node
                 # after popping it should be added as a child
                 if len(stack) > 1:
                     chld = stack.pop()
                     stack[-1].children.append(chld)
-            elif token.dtype == TokenEnum.identifier:
+            elif token_t.dtype == TokenEnum.identifier:
                 # if current Node is None
                 # it means previous node has been pushed to the stack
                 # because of an opening brace
                 if c_node is None:
-                    c_node = Node(token.lval)
+                    c_node = Node(token_t.lval)
                 # Most likely its an attribute key for a node
                 else:
                     if self.lexer.get_next_token().dtype == TokenEnum.equals_symbol:
                         attr_value = self.lexer.get_next_token()
                         if attr_value.dtype in [TokenEnum.real_t, TokenEnum.int_t, TokenEnum.string_t]:
-                            c_node.attrs[token.lval] = attr_value.lval
-            elif token.dtype == TokenEnum.equals_symbol:
+                            c_node.attrs[token_t.lval] = attr_value.lval
+            elif token_t.dtype == TokenEnum.equals_symbol:
                 # all EQ's are consumed by identifier if c_node is not None
                 # probably stray EQ
-                # raise Error
-                print(token)
-            elif token.dtype == TokenEnum.real_t:
+                raise BracesException(
+                    "stray equals symbol found at line {} column {}".format(token_pos_to_line(self.source, token_t)))
+            elif token_t.dtype == TokenEnum.real_t:
                 # value for a node possible only if c_node is None
                 # attribute values are consumed by identifier if c_node is not None
                 if c_node is None and len(stack):
-                    stack[-1].value = token.lval
+                    stack[-1].value = token_t.lval
                     # print(token)
-            elif token.dtype == TokenEnum.int_t:
+            elif token_t.dtype == TokenEnum.int_t:
                 # value for a node possible only if c_node is None
                 # attribute values are consumed by identifier if c_node is not None
                 if c_node is None and len(stack):
-                    stack[-1].value = token.lval
+                    stack[-1].value = token_t.lval
                     # print(token)
-            elif token.dtype == TokenEnum.string_t:
+            elif token_t.dtype == TokenEnum.string_t:
                 # value for a node possible only if c_node is None
                 # attribute values are consumed by identifier if c_node is not None
                 if c_node is None and len(stack):
-                    stack[-1].value = token.lval
+                    stack[-1].value = token_t.lval
                     # print(token)
-            elif token.dtype == TokenEnum.eof:
+            elif token_t.dtype == TokenEnum.eof:
                 if len(stack) == 1:
                     break
         return stack[0]
 
 
-# this function prints the file structure
-def _dump(root, tab_count=0):
+# this function prints the original file structure from the root node
+def _dump(root_node, tab_count=0):
     def tabs():
         return '\t' * tab_count
-    
-    s = tabs() + root.name + ' '
-    if root.attrs != {}:
-        for key in root.attrs.keys():
-            if isinstance(root.attrs[key], str):
-                s += key + ' = "' + root.attrs[key] + '" '
+
+    s = tabs() + root_node.name + ' '
+    if root_node.attrs != {}:
+        for key in root_node.attrs.keys():
+            if isinstance(root_node.attrs[key], str):
+                s += key + ' = "' + root_node.attrs[key] + '" '
             else:
-                s += key + ' = ' + str(root.attrs[key]) + ' '
+                s += key + ' = ' + str(root_node.attrs[key]) + ' '
     s += '{'
     tab_count += 1
-    if root.value is not None:
+    if root_node.value is not None:
         s += '\n'
-        if isinstance(root.value, str):
-            s += tabs() + '"' + root.value + '"\n'
+        if isinstance(root_node.value, str):
+            s += tabs() + '"' + root_node.value + '"\n'
         else:
-            s += tabs() + str(root.value) + '\n'
-    if len(root.children) != 0:
+            s += tabs() + str(root_node.value) + '\n'
+    if len(root_node.children) != 0:
         s += '\n'
-    for node in root.children:
+    for node in root_node.children:
         s += _dump(node, tab_count)
     tab_count -= 1
     if s[-1] == '{':

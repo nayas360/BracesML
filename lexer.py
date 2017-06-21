@@ -1,4 +1,4 @@
-from utils import Regex, Token, TokenEnum
+from utils import Regex, Token, TokenEnum, pos_to_line, BracesException
 
 
 # The lexer class
@@ -20,7 +20,8 @@ class Lexer:
                 token_t = Token(regex_result, TokenEnum.types_list[Regex.types_list.index(i)], self._pos)
                 break
         if token_t is None:
-            raise TypeError("cannot determine token at {}".format(self._pos))
+            line, col = pos_to_line(self.source, self._pos)
+            raise BracesException("cannot determine symbol at line {} column {}".format(line, col))
         if token_t.dtype in self.suppressTypes:
             self._pos += token_t.len
             return self.get_next_token(see_only)

@@ -1,14 +1,15 @@
 import re
 import sys
 
-__all__ = ['TokenEnum', 'Token', 'Regex', 'Node', 'dbq_string', 'pos_to_line',
+__all__ = ['TokenEnum', 'Token', 'Regex', 'Node', 'dbq_string', 'pos_to_line', 'token_pos_to_line',
            'file_opener']
 
 
-# class ParserException(Exception):
-#     pass
+class BracesException(Exception):
+    pass
 
 
+# TODO: Add support for an array of heterogeneous types between []
 # Collection of recognised tokens
 class TokenEnum:
     # Discarded tokens
@@ -106,11 +107,20 @@ def _simplify_value(self):
         self.lval = dbq_string(repr(self.lval).strip("'"))
 
 
-# maps the starting pos of a token to the line and column of the given source
-def pos_to_line(source, tok):
-    lin = source[:tok.pos].count('\n') + 1
+# maps the pos to the line and column of the given source
+def pos_to_line(source, pos):
+    lin = source[:pos].count('\n') + 1
     col = 1
-    while source[tok.pos - col] != '\n':
+    while source[pos - col] != '\n':
+        col += 1
+    return lin, col
+
+
+# maps the starting pos of a token to the line and column of the given source
+def token_pos_to_line(source, token_t):
+    lin = source[:token_t.pos].count('\n') + 1
+    col = 1
+    while source[token_t.pos - col] != '\n':
         col += 1
     return lin, col
 
@@ -121,6 +131,7 @@ def file_opener(filename):
     return source
 
 
+# TODO: add more functionality to the node class for data access and modification
 # A node class
 class Node:
     def __init__(self, name, value=None, **attrs):
