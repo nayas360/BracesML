@@ -1,5 +1,5 @@
 /*
-* @breif: this file is a test case for the data block
+* @breif: this file is a test case for the bracesML
 */
 
 dblk {
@@ -14,4 +14,6 @@ dblk {
 	attr_node sAttr = "string attribute" iAttr = 10 rAttr = 10.10 { // A node with attributes
 		child_node_empty {} // empty child node
 	}
+	non_unique_node { 10 } // this should be available separately
+	non_unique_node { 20 } // this also should be a separate node
 }
