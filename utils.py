@@ -142,7 +142,7 @@ class Node:
         self.children = []
 
     def add_child(self, name, value=None, **attrs):
-        child = Node(name, value=None, **attrs)
+        child = Node(name, value, **attrs)
         self.children.append(child)
         return child
 

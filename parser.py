@@ -2,7 +2,7 @@ from lexer import Lexer
 from utils import Node, TokenEnum, file_opener, BracesException, token_pos_to_line
 
 
-class PARSER:
+class Parser:
     def __init__(self, filename):
         self.filename = filename
         self.source = file_opener(filename)
@@ -107,6 +107,6 @@ def _generate_paths(root, paths=[], level=0):
 
 
 if __name__ == '__main__':
-    p = PARSER('test.dblk')
+    p = Parser('test.dblk')
     t = p.parse()
     print(_dump(t))
