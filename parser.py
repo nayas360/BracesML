@@ -16,15 +16,19 @@ class Parser:
             # print(stack, c_node, token)
             # print(repr(token))
             if token_t.dtype == TokenEnum.open_brace:
-                stack.append(c_node)
-                c_node = None
+                if c_node is not None:
+                    stack.append(c_node)
+                    c_node = None
+                else:
+                    raise BracesException(
+                        "stray opening braces at line {} column {}".format(*token_pos_to_line(self.source, token_t)))
             elif token_t.dtype == TokenEnum.end_brace:
                 # if more than one nodes in stack
                 # the last node is a child of the previous node
                 # after popping it should be added as a child
                 if len(stack) > 1:
-                    chld = stack.pop()
-                    stack[-1].children.append(chld)
+                    child = stack.pop()
+                    stack[-1].children.append(child)
             elif token_t.dtype == TokenEnum.identifier:
                 # if current Node is None
                 # it means previous node has been pushed to the stack
@@ -41,7 +45,7 @@ class Parser:
                 # all EQ's are consumed by identifier if c_node is not None
                 # probably stray EQ
                 raise BracesException(
-                    "stray equals symbol found at line {} column {}".format(token_pos_to_line(self.source, token_t)))
+                    "stray equals symbol found at line {} column {}".format(*token_pos_to_line(self.source, token_t)))
             elif token_t.dtype == TokenEnum.real_t:
                 # value for a node possible only if c_node is None
                 # attribute values are consumed by identifier if c_node is not None
@@ -107,6 +111,6 @@ def _generate_paths(root, paths=[], level=0):
 
 
 if __name__ == '__main__':
-    p = Parser('test.dblk')
+    p = Parser('test.bml')
     t = p.parse()
     print(_dump(t))

@@ -45,7 +45,7 @@ class Lexer:
 
 
 if __name__ == '__main__':
-    with open("test.dblk") as f:
+    with open("test.bml") as f:
         source = ''.join(f.readlines())
     lexer = Lexer(source)
     tok_list = []

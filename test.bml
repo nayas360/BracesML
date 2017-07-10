@@ -1,0 +1,22 @@
+/*
+* @breif: this file is a test case for the bracesML
+*/
+
+bml_root version = "0.0.1" encoding = "utf-8" {
+	empty_node {} // Empty node
+	string_node { // A string node
+		"test string"
+	}
+	string_node_2 { // a second string node
+	    "\"test\" string"
+    }
+	num_node { // A number test
+		frac_node { 10.10 } // Floating point decimal point number
+		int_node { 10 } // Integer decimal number
+	}
+	attr_node sAttr = "string attribute" iAttr = 10 rAttr = 10.10 { // A node with attributes
+		child_node_empty {} // empty child node
+	}
+	non_unique_node { 10 } // this should be available separately
+	non_unique_node { 20 } // this also should be a separate node
+}

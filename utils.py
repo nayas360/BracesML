@@ -53,7 +53,7 @@ class Regex:  # __REGEX__:
     equals_symbol = re.compile("=")
     real_t = re.compile("[-+]?\d*\.\d*")
     int_t = re.compile("[-+]?\d*")
-    string_t = re.compile("((\"\")|(\".+?\"))", re.DOTALL)
+    string_t = re.compile(r'"(?:\\.|[^"\\])*"', re.DOTALL)  # ("((\"\")|(\".+?\"))", re.DOTALL)
 
     # TYPES WHICH ARE NOT RETURNED
     comment = re.compile("((/\*(.|\\\n)*\*/)|(//.*\\\n))")
