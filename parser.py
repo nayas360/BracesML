@@ -90,7 +90,7 @@ def _dump(root_node, tab_count=0):
             s += tabs() + '"' + root_node.value + '"\n'
         else:
             s += tabs() + str(root_node.value) + '\n'
-    if len(root_node.children) != 0:
+    if len(root_node.children) != 0 and s[-1] != '\n':
         s += '\n'
     for node in root_node.children:
         s += _dump(node, tab_count)
@@ -111,6 +111,5 @@ def _generate_paths(root, paths=[], level=0):
 
 
 if __name__ == '__main__':
-    p = Parser('test.bml')
-    t = p.parse()
+    t = Parser('test.bml').parse()
     print(_dump(t))
