@@ -21,6 +21,6 @@ bml_root version = "0.0.1" encoding = "utf-8" {
 	non_unique_node { 20 } // this also should be a separate node
 	mixed_node { // test node mixing value and children
 	    "test value"
-	    other_child_node {}
+	    child_node attr_test = "test attr" {}
 	}
 }
