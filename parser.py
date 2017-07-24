@@ -87,7 +87,7 @@ def _dump(root_node, tab_count=0):
     if root_node.value is not None:
         s += '\n'
         if isinstance(root_node.value, str):
-            s += tabs() + '"' + root_node.value + '"\n'
+            s += tabs() + '"' + root_node.value.replace('\"', '\\"') + '"\n'
         else:
             s += tabs() + str(root_node.value) + '\n'
     if len(root_node.children) != 0 and s[-1] != '\n':

@@ -53,7 +53,7 @@ class Regex:  # __REGEX__:
     equals_symbol = re.compile("=")
     real_t = re.compile("[-+]?\d*\.\d*")
     int_t = re.compile("[-+]?\d*")
-    string_t = re.compile(r'"(?:\\.|[^"\\])*"', re.DOTALL)  # ("((\"\")|(\".+?\"))", re.DOTALL)
+    string_t = re.compile(r'"(?:\\.|[^"\\])*"')  # , re.DOTALL)  # ("((\"\")|(\".+?\"))", re.DOTALL)
 
     # TYPES WHICH ARE NOT RETURNED
     comment = re.compile("((/\*(.|\\\n)*\*/)|(//.*\\\n))")
@@ -103,6 +103,8 @@ def _simplify_value(self):
         self.lval = int(self.lval)
     if self.dtype == TokenEnum.string_t:
         self.lval = self.lval.strip('"')
+        self.lval = self.lval.replace('\\"', '\"')
+        #print(repr(self.lval))
     if self.dtype in (TokenEnum.whitespace, TokenEnum.eof, TokenEnum.equals_symbol):
         self.lval = dbq_string(repr(self.lval).strip("'"))
 
