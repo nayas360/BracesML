@@ -18,4 +18,4 @@ bracesML specification v0.0.1 - see [bracesML specification](bracesML_specificat
 * **Sayan Dutta** - _Initial Work_ - [nayas360](https://github.com/nayas360)
 
 ## License
-This project is licensed under GPLv3 - see the [LICENSE.md]() file for details
+This project is licensed under GPLv3 - see the [LICENSE.md](LICENSE.md) file for details
