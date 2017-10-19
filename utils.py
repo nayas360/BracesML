@@ -104,7 +104,7 @@ def _simplify_value(self):
     if self.dtype == TokenEnum.string_t:
         self.lval = self.lval.strip('"')
         self.lval = self.lval.replace('\\"', '\"')
-        #print(repr(self.lval))
+        # print(repr(self.lval))
     if self.dtype in (TokenEnum.whitespace, TokenEnum.eof, TokenEnum.equals_symbol):
         self.lval = dbq_string(repr(self.lval).strip("'"))
 

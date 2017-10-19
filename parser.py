@@ -107,7 +107,7 @@ def _dump(root_node, tab_count=0):
 # this function lists all paths that can be accessed
 def _generate_paths(root, paths=[], level=0):
     # TODO: complete this function
-    pass
+    raise NotImplementedError
 
 
 if __name__ == '__main__':
